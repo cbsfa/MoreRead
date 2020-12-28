@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页_多多阅读</title>
+    <style>
+        *
+        {
+            padding: 0;
+            margin: 0;
+        }
+        body
+        {
+            background: #f2f2f2;
+        }
+        nav
+        {
+            background: #171c24;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+            padding: 0 100px;
+        }
+        nav .logo
+        {
+            color: #fff;
+            font-size: 30px;
+            font-weight: 600;
+            letter-spacing: -1px;
+        }
+        nav .nav-items{
+            display: flex;
+            flex: 1;
+            padding: 0 0 0 40px;
+        }
+        nav .nav-items li{
+            list-style: none;
+            padding: 0 15px;
+        }
+        nav .nav-items li a{
+            color: #fff;
+            font-size: 18px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        nav .nav-items li a:hover{
+            color: #ff3d00;
+        }
+        nav #searchBox{
+            display: flex;
+            height: 40px;
+            padding: 2px;
+            background: #1e232b;
+            min-width: 18%!important;
+            border-radius: 2px;
+            border: 1px solid rgba(155,155,155,0.2);
+        }
+        nav #search{
+            width: 100%;
+            height: 100%;
+            padding: 0 10px;
+            color: #fff;
+            font-size: 17px;
+            border: none;
+            font-weight: 500;
+            background: none;
+        }
+        nav #searchButton{
+            padding: 0 15px;
+            color: #fff;
+            font-size: 17px;
+            background: #ff3d00;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        nav #searchButton:hover{
+            background: #e63600;
+        }
+        li {
+            text-align: -webkit-match-parent;
+            display: list-item;
+        }
+
+        .fav_list{
+            min-height: 95%;
+            padding: 0 32px 30px;
+            margin-top: 50px;
+            margin-right: 50px;
+            margin-left: 200px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px 0 rgba(0,0,0,.05);
+        }
+        .fav_list_box{
+            box-sizing: border-box;
+            display: block;
+            overflow: hidden;
+            zoom: 1;
+        }
+        .fav_list_title{
+            height: 90px;
+            line-height: 90px;
+            /*border-bottom: 1px solid #e0e0e0;*/
+            display: block;
+        }
+        .fav_list_title_h3{
+            display : inline;
+        }
+        .my_fav_con{
+            display: block;
+        }
+        .my_fav_list{
+            margin: 0;
+            padding: 0;
+            font-size: 100%;
+            vertical-align: baseline;
+            border: 0;
+            display: block;
+            overflow: hidden;
+            zoom: 1;
+        }
+        .my_fav_list_li{
+            padding: 16px 0;
+            font-size: 0;
+            border-top: 1px solid #e0e0e0;
+            list-style: none;
+        }
+        .my_fav_list_a{
+            width: 78%;
+            line-height: 24px;
+            font-size: 16px;
+            vertical-align: middle;
+            color: #4d4d4d;
+            text-decoration: none;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .my_fav_list_label span{
+            color: #ccc;
+            margin-right: 15px;
+            vertical-align: middle;
+            display: inline-block;
+        }
+        .my_fav_list_a:hover {
+            color: red;
+        }
+        *
+        {
+            margin: 0;
+            border: 0;
+            padding: 0;
+            font-size: 25pt;
+        }
+
+        #nav {
+            height: 40px;
+            border-top: #060 2px solid;
+            margin-top: 100px;
+            border-bottom: #060 2px solid;
+            background-color: #690;
+            text-align: center;
+        }
+
+        #nav ul {
+            list-style: none;
+            line-height: 40px;
+            margin-left: 50px;
+        }
+
+        #nav li {
+            display: block;
+            float: left;
+        }
+
+        #nav input {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 0 20px;
+        }
+
+        #nav input:hover {
+            background-color: #060;
+        }
+
+        #nav #pageLocation
+        {
+            color: black;
+            width: 400px;
+        }
+
+        #nav .button
+        {
+            width: 200px;
+        }
+    </style>
+</head>
+<body onload="display()" id="body">
+<nav>
+    <div class="logo">多多阅读</div>
+    <div class="nav-items">
+        <li><a href="/main">首页</a></li>
+        <li><a href="/upload">上传</a></li>
+        <li><a href="/logout">退出</a></li>
+    </div>
+    <div id="searchBox">
+        <input type="text" id="search" placeholder="输入书名">
+        <input type="button" value="搜索" id="searchButton" onclick="location.href='/search/'+document.getElementById('search').value">
+    </div>
+</nav>
+<div class="fav_list">
+    <div class="fav_list_box">
+        <div class="fav_list_title">
+            <h3 class="fav_list_title_h3">全部图书</h3>
+        </div>
+    </div>
+    <div class="my_fav_con">
+        <div id="pageUlDiv">
+        </div>
+    </div>
+</div>
+<div id="nav">
+    <ul id="listUl"></ul>
+    <li><input type="button" class="button" value="首页" onclick="pageLocation=0;displayPage()"></li>
+    <li><input type="button" class="button" value="上一页" onclick="if (pageLocation>0) pageLocation--;displayPage()"></li>
+    <li><input type="button" class="button" value="跳转至" onclick="jumpTo()"></li>
+    <li><input type="text" id="pageLocation"></li>
+    <li><input type="button" class="button" value="下一页" onclick="if (pageLocation<pageNum-2) pageLocation++;displayPage()"></li>
+    <li><input type="button" class="button" value="末页" onclick="pageLocation=+parseInt(pageNum-1);displayPage()"></li>
+    </ul>
+</div>
+</body>
+<script>
+    let temp="<%=bookName%>"
+    let bookName=[]
+    bookName=temp.split(',')
+    temp="<%=number%>"
+    let number=[]
+    number=temp.split(',')
+    let pageSize=10
+    let pageNum=number.length/pageSize+1
+    let pageLocation=0
+    let body=document.getElementById('body')
+    document.getElementById('search').addEventListener("keyup",function(event)
+    {
+        event.preventDefault()
+        if (event.keyCode===13) document.getElementById('searchButton').click()
+    })
+    function display()
+    {
+        document.getElementById('pageUlDiv').appendChild(create('ul','<ul id="pageUl" class="my_fav_list"></ul>'))
+        displayPage()
+    }
+    function create(type,innerHTML)
+    {
+        let object=document.createElement(type)
+        object.innerHTML=innerHTML
+        return object
+    }
+    function displayPage()
+    {
+        let ul=document.getElementById('pageUl')
+        let list=ul.querySelectorAll('li')
+        for (let i=0;i<list.length;i++) list[i].remove()
+        for (let i=pageLocation*pageSize;i<(pageLocation+1)*pageSize&&i<number.length;i++) document.getElementById('pageUl').appendChild(create('li','<li class="my_fav_list_li"><a class="my_fav_list_a" href="/novel/'+number[i]+'">'+bookName[i]+'</a></li>'))
+        document.getElementById('pageLocation').value=parseInt(pageLocation+1)
+    }
+    function jumpTo()
+    {
+        let page=document.getElementById('pageLocation').value
+        if (page<1||page>pageNum)
+        {
+            alert('输入错误')
+            document.getElementById('pageLocation').value=parseInt(pageLocation+1)
+        }
+        else
+        {
+            pageLocation=parseInt(page-1)
+            displayPage()
+        }
+    }
+</script>
+</html>
