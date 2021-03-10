@@ -1,6 +1,7 @@
 //模块加载
 let fs=require('fs')
 let open=require('open')
+let iconv=require('iconv-lite')
 let mysql=require('mysql')
 let express=require('express')
 let session=require('express-session')
@@ -11,7 +12,7 @@ let formidable=require('formidable')
 let mysqlConnection=mysql.createConnection({
     host:'localhost',
     user:'root',
-    password:'123456',
+    password:'12345615',
     database:'多多阅读'
 })
 mysqlConnection.connect()
@@ -30,8 +31,6 @@ server.use(session({
     resave:true,
     saveUninitialized:false,
 }))
-let count=0;
-let online=0;
 open('http://localhost:3000/login')
 
 //打开界面
@@ -72,22 +71,54 @@ server.get('/main',function (req,res)
     }
     else res.send('<script>alert("未登录时无法访问该页面");location.href="/login"</script>')
 })
-server.get('/novel/:location',function (req,res)
+server.get('/novel/download/:location',function (req,res)
 {
     if (req.session.phone)
     {
-        let sql='select * from 小说信息 where 编号='+req.params.location
+        let temp=req.params.location
+        let pattern=/[0-9]*/g
+        temp=temp.match(pattern)
+        let location=temp[0]
+        let sql='select * from 小说信息 where 编号='+location
         mysqlConnection.query(sql,function (error,result)
         {
             if (error) console.log(error)
             else
             {
                 let url='.'+result[0]['地址']
-                res.download(url)
-                //以下是在线阅读扩展，目前暂时停用
-                //let bookName=result[0]['书名']
-                //let data=fs.readFileSync(url).toString()
-                //res.render('novel',{phone:req.session.phone,data:data,bookName:bookName})
+                res.download((url))
+            }
+        })
+    }
+    else res.send('<script>alert("未登录时无法访问该页面");location.href="/login"</script>')
+})
+server.get('/novel/:location',function (req,res)
+{
+    if (req.session.phone)
+    {
+        let temp=req.params.location
+        let pattern=/[0-9]*/g
+        temp=temp.match(pattern)
+        let location=temp[0]
+        let pageLocation=temp[2]
+        let sql='select * from 小说信息 where 编号='+location
+        mysqlConnection.query(sql,function (error,result)
+        {
+            if (error) console.log(error)
+            else
+            {
+                let url='.'+result[0]['地址']
+                //res.download(url)
+                let bookName=result[0]['书名']
+                let temp=iconv.decode(fs.readFileSync(url),'gbk').toString()
+                let pageSize=5000
+                let pageNum=temp.length/pageSize
+                if (pageLocation)
+                {
+                    let data=temp.slice(pageLocation*pageSize,pageLocation*pageSize+pageSize)
+                    res.render('novel',{phone:req.session.phone,data:data,pageLocation:pageLocation,pageNum:pageNum,bookName:bookName,bookNum:location})
+                }
+                else res.render('catalog',{phone:req.session.phone,pageNum:pageNum,bookName:bookName,bookNum:location})
             }
         })
     }
@@ -125,10 +156,6 @@ server.get('/search/:searchBook',function (req,res)
 server.get('/logout',function (req,res)
 {
     req.session.phone=null
-    online--;
-    console.log('访问量：'+count)
-    console.log('在线人数：'+online)
-    console.log()
     res.send('<script>alert("退出成功");location.href="/login"</script>')
 })
 
@@ -146,11 +173,6 @@ server.post('/login',function (req,res)
             if (error) console.log(error)
             else if (result.length!==0)
             {
-                count++;
-                online++;
-                console.log('访问量：'+count)
-                console.log('在线人数：'+online)
-                console.log()
                 req.session.phone=phone
                 res.send('<script>alert("登录成功");location.href="/main"</script>')
             }
